@@ -1,5 +1,8 @@
 pipeline {
     agent none
+    options {
+        skipStagesAfterUnstable()
+    }
     stages {
         stage('Build') {
             agent {
@@ -26,18 +29,18 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') {
+        stage('Deliver') { //1
             agent {
                 docker {
-                    image 'cdrx/pyinstaller-linux:python2'
+                    image 'cdrx/pyinstaller-linux:python2' //2
                 }
             }
             steps {
-                sh 'pyinstaller --onefile sources/add2vals.py'
+                sh '/root/.pyenv/shims/pyinstaller --onefile sources/add2vals.py' //3
             }
             post {
                 success {
-                    archiveArtifacts 'dist/add2vals'
+                    archiveArtifacts 'dist/add2vals' //4
                 }
             }
         }
